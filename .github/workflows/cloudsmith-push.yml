@@ -49,4 +49,4 @@ jobs:
           owner: "interview-shahid-ahmed" # Replace with your Cloudsmith org/username
           repo: "shahid-repo" # Replace with your Cloudsmith repository name
           file: "dist/*" # Path to your built package
-          republish: "false" # Set to 'true' if overwriting an existing version
+          republish: "true" # Set to 'true' if overwriting an existing version
