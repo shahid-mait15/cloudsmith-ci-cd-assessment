@@ -19,11 +19,6 @@ jobs:
           value=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=api://AzureADTokenExchange" | jq '.value')
           # Exchange the OIDC token for a Cloudsmith-specific token
           token=$(curl -X POST -H "Content-Type: application/json" -d "{\"oidc_token\":$value, \"service_slug\":\"Github Action service account\"}" https://api.cloudsmith.io/openid/interview-shahid-ahmed/ | jq -r '.token')
-          # Verify the token by querying the Cloudsmith API
-          curl --request POST \
-          --url https://api.cloudsmith.io/v1/packages/owner/repo/validate-upload/python/ \
-          --header 'accept: application/json' \
-          --header 'content-type: application/json'
           curl --request GET --url https://api.cloudsmith.io/v1/user/self/ --header "X-Api-Key:Bearer $token" --header 'accept: application/json'
           # Store the token as an environment variable
           echo "CLOUDSMITH_API_KEY=$token" >> $GITHUB_ENV
@@ -44,6 +39,13 @@ jobs:
         # Build the package
 
         run: python setup.py sdist
+        - name: Validate package upload
+        run: |
+          curl --request POST \
+            --url https://api.cloudsmith.io/v1/packages/owner/repo/validate-upload/python/ \
+            --header 'accept: application/json' \
+            --header 'content-type: application/json' \
+            --header "X-Api-Key: Bearer $CLOUDSMITH_API_KEY"
       - name: Suppress SyntaxWarnings
         run: echo "PYTHONWARNINGS=ignore::SyntaxWarning" >> $GITHUB_ENV
       - name: Push package to Cloudsmith
