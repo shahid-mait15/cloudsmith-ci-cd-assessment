@@ -57,9 +57,9 @@ jobs:
 
         uses: cloudsmith-io/action@v0.5.3
         with:
-          command: 'push'
-          format: 'python'
-          owner: 'interview-shahid-ahmed' # Replace with your Cloudsmith org/username
-          repo: 'shahid-repo' # Replace with your Cloudsmith repository name
-          file: 'dist/*' # Path to the built package
-          republish: 'false' # Set to 'true' if overwriting an existing version
+          command: "push"
+          format: "python"
+          owner: "interview-shahid-ahmed" # Replace with your Cloudsmith org/username
+          repo: "shahid-repo" # Replace with your Cloudsmith repository name
+          file: "dist/*" # Path to the built package
+          republish: "false" # Set to 'true' if overwriting an existing version
