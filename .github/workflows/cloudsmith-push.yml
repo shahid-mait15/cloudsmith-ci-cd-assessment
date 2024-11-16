@@ -1,52 +1,43 @@
-name: Push Python Package to Cloudsmith with OIDC
+name: Push Python Package to Cloudsmith
 on:
   push:
     branches:
       - main # Trigger on push to the main branch
-permissions:
-  id-token: write # Required for requesting the JWT token which Cloudsmith needs
-  contents: read # Required for actions/checkout
+Permissions:
+  id-token: write # Required for requesting the JWT token which cloudsmith needs to read
+  contents: read # This is required for actions/checkout
 jobs:
   build:
-    runs-on: ubuntu-latest # Use an Ubuntu runner for the job
+    runs-on: ubuntu-latest # Using Ubuntu runner for the job
     steps:
       # Checkout the repository
-      - name: Check out code
+      - name: Checkout code
         uses: actions/checkout@v4
-      - name: Get OIDC token
-        run: |
-          # Request an OIDC token from GitHub
-          value=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=api://AzureADTokenExchange" | jq '.value')
-          # Exchange the OIDC token for a Cloudsmith-specific token
-          token=$(curl -X POST -H "Content-Type: application/json" -d "{\"oidc_token\":$value, \"service_slug\":\"SERVICE_ACCOUNT_SLUG\"}" https://api.cloudsmith.io/openid/interview-shahid-ahmed/ | jq -r '.token')
-          # Verify the token by querying the Cloudsmith API
-          curl --request GET --url https://api.cloudsmith.io/v1/user/self/ --header "X-Api-Key:Bearer $token" --header 'accept: application/json'
-          # Store the token as an environment variable
-          echo "CLOUDSMITH_API_KEY=$token" >> $GITHUB_ENV
       - name: Set up Python
-        # Set up Python environment
+        # Set up Python
 
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
       - name: Install dependencies
-        # Install dependencies for building Python packages
+        # Install dependencies
 
         run: |
           python -m pip install --upgrade pip
           pip install setuptools twine
       - name: Build the package
-        # Build the Python package
+        # Build the package
 
         run: python setup.py sdist
-      - name: Push Python Package to Cloudsmith
-        # Push the built package to Cloudsmith
+      - name: Push package to Cloudsmith
+        # Push package to Cloudsmith
 
         uses: cloudsmith-io/action@master
         with:
+          api-key: ${{ secrets.CLOUDSMITH_API_KEY }}
           command: "push"
-          format: "python" # The format of the package
-          owner: "interview-shahid-ahmed" # Replace with your Cloudsmith org/username
-          repo: "shahid-repo" # Replace with your Cloudsmith repository name
-          file: "dist/*" # Path to your built package
-          republish: "true" # Set to 'true' if overwriting an existing version
+          format: "python" #format of the package
+          owner: "interview-shahid-ahmed" # my Cloudsmith username
+          repo: "shahid-repo" # my Cloudsmith repository name
+          file: "dist/*" # path to built package 
+          republish: "false" # set to true if want to overwriting an existing version
