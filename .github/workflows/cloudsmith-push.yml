@@ -45,5 +45,5 @@ jobs:
           format: "python" #format of the package
           owner: "interview-shahid-ahmed" # my Cloudsmith username
           repo: "shahid-repo" # my Cloudsmith repository name
-          file: "dist/cloudsmith-debian-example-1.0.0-amd64.deb" # path to built package 
+          file: "dist/*" # path to built package 
           republish: "false" # set to true if want to overwriting an existing version
