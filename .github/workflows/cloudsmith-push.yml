@@ -39,14 +39,17 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install setuptools twine
+          pip install --upgrade cloudsmith-cli
       - name: Build the package
         # Build the package
 
         run: python setup.py sdist
+      - name: Suppress SyntaxWarnings
+        run: echo "PYTHONWARNINGS=ignore::SyntaxWarning" >> $GITHUB_ENV
       - name: Push package to Cloudsmith
         # Push package to Cloudsmith
 
-        uses: cloudsmith-io/action@master
+        uses: cloudsmith-io/action@v0.5.3
         with:
           command: "push"
           format: "python" #format of the package
