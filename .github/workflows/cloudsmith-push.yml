@@ -49,6 +49,7 @@ jobs:
         # Push package to Cloudsmith
         uses: cloudsmith-io/action@v0.5.3
         with:
+          api-key: ${{ secrets.CLOUDSMITH_API_KEY }}
           command: "push"
           format: "python" #format of the package
           owner: "interview-shahid-ahmed" # my Cloudsmith username
