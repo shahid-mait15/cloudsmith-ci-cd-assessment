@@ -24,22 +24,19 @@ jobs:
           echo "CLOUDSMITH_API_KEY=$token" >> $GITHUB_ENV
       - name: Set up Python
         # Set up Python
-
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
       - name: Install dependencies
         # Install dependencies
-
         run: |
           python -m pip install --upgrade pip
           pip install setuptools twine
           pip install --upgrade cloudsmith-cli
       - name: Build the package
         # Build the package
-
         run: python setup.py sdist
-        - name: Validate package upload
+      - name: Validate package upload
         run: |
           curl --request POST \
             --url https://api.cloudsmith.io/v1/packages/owner/repo/validate-upload/python/ \
@@ -50,7 +47,6 @@ jobs:
         run: echo "PYTHONWARNINGS=ignore::SyntaxWarning" >> $GITHUB_ENV
       - name: Push package to Cloudsmith
         # Push package to Cloudsmith
-
         uses: cloudsmith-io/action@v0.5.3
         with:
           command: "push"
