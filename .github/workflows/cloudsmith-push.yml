@@ -1,0 +1,40 @@
+name: Push Python Package to Cloudsmith
+on:
+  push:
+    branches:
+      - main # Trigger on push to the main branch
+jobs:
+  build:
+    runs-on: ubuntu-latest # Using Ubuntu runner for the job
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Python
+        # Set up Python
+
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install dependencies
+        # Install dependencies
+
+        run: |
+          python -m pip install --upgrade pip
+          pip install setuptools twine
+      - name: Build the package
+        # Build the package
+
+        run: python setup.py sdist
+      - name: Push package to Cloudsmith
+        # Push package to Cloudsmith
+
+        uses: cloudsmith-io/action@master
+        with:
+          api-key: ${{ secrets.CLOUDSMITH_API_KEY }}
+          command: "push"
+          format: "python" #format of the package
+          owner: "interview-shahid-ahmed" # my Cloudsmith username
+          repo: "shahid-repo" # my Cloudsmith repository name
+          file: "dist/*" # path to built package 
+          republish: "false" # set to true if want to overwriting an existing version
